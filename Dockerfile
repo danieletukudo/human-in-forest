@@ -14,9 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 5900
-
+# Railway sets PORT at runtime; app.py reads it
 ENV FLASK_APP=app.py
 ENV FLASK_DEBUG=0
+ENV PORT=5900
 
 CMD ["python", "app.py"]

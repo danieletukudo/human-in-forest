@@ -4,7 +4,7 @@ from rfdetr import RFDETRNano
 import supervision as sv
 
 BASE = Path(__file__).resolve().parent
-CHECKPOINT = BASE / "output/small_checkpoint_best_total.pth"
+CHECKPOINT = BASE / "output" / "small_checkpoint_best_total.pth"
 
 THRESHOLD = 0.5
 CLASSES = [
@@ -13,11 +13,21 @@ CLASSES = [
     "cow",     # class 2
 ]
 
-model = RFDETRNano(pretrain_weights=str(CHECKPOINT))
-model.optimize_for_inference()
+_model = None
+
+
+def get_model():
+    global _model
+    if _model is None:
+        if not CHECKPOINT.exists():
+            raise FileNotFoundError(f"Checkpoint not found: {CHECKPOINT}")
+        _model = RFDETRNano(pretrain_weights=str(CHECKPOINT), num_classes=2)
+        _model.optimize_for_inference()
+    return _model
 
 
 def run_detection(video_path: str, output_path: str) -> str:
+    model = get_model()
     video_info = sv.VideoInfo.from_video_path(video_path)
 
     text_scale = sv.calculate_optimal_text_scale(

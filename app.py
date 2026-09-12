@@ -3,8 +3,6 @@ from pathlib import Path
 from flask import Flask, render_template, request, send_file, flash, redirect, url_for
 from werkzeug.utils import secure_filename
 
-from videorun import run_detection
-
 app = Flask(__name__)
 app.secret_key = "dev"
 app.config["MAX_CONTENT_LENGTH"] = 200 * 1024 * 1024
@@ -23,8 +21,16 @@ def index():
     return render_template("index.html")
 
 
+@app.route("/health")
+def health():
+    return {"status": "ok"}, 200
+
+
 @app.route("/detect", methods=["POST"])
 def detect():
+    # Import here so the homepage can load even if the model is still starting
+    from videorun import run_detection
+
     file = request.files.get("video")
     if not file or not file.filename:
         flash("No video selected")
@@ -44,6 +50,9 @@ def detect():
     return send_file(out_path, as_attachment=True, download_name=out_path.name)
 
 
-
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5900)
+    import os
+
+    # Railway (and most hosts) inject PORT — must bind to it
+    port = int(os.environ.get("PORT", "5900"))
+    app.run(host="0.0.0.0", port=port)
