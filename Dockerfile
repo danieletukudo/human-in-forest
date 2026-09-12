@@ -1,27 +1,22 @@
-# Use an official Python runtime as a parent image
-FROM python:3.9.11
+FROM python:3.10-slim
 
-# Set the working directory to /app
 WORKDIR /app
 
+# OpenCV / video runtime deps (libgl1-mesa-glx is gone on Debian bookworm+)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
 
-
-# Copy the requirements file into the container and install the dependencies
-
-COPY requirements.txt /app
-RUN apt-get update && apt-get install -y libgl1-mesa-glx
-
-RUN apt-get update && apt-get install -y cmake
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
-# Copy the current directory contents into the container at /app
-COPY . /app
 
-# Expose port 5000 for the Flask application
+COPY . .
+
 EXPOSE 5900
 
-# Set the environment variable for Flask to run in production mode
-ENV FLASK_ENV=production
-
-# Start the Flask application
 ENV FLASK_APP=app.py
-CMD ["flask", "run", "--host", "0.0.0.0","--port=5900"]
+ENV FLASK_DEBUG=0
+
+CMD ["python", "app.py"]

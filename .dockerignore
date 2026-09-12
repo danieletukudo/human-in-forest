@@ -1,9 +1,12 @@
-uploads/
-outputs/
-__pycache__/
 .venv/
 venv/
+__pycache__/
 *.pyc
 .DS_Store
 .git/
-yolov8n.pt
+uploads/
+outputs/
+checkpoint_best_total.pth
+*.onnx
+qun.py
+README.md
