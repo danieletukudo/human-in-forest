@@ -1,0 +1,9 @@
+uploads/
+outputs/
+__pycache__/
+.venv/
+venv/
+*.pyc
+.DS_Store
+.git/
+yolov8n.pt

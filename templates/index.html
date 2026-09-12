@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RF-DETR Detect</title>
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      max-width: 400px;
+      margin: 4rem auto;
+      padding: 0 1rem;
+    }
+    h1 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+    p { color: #555; margin-top: 0; }
+    input, button { display: block; width: 100%; margin: 0.75rem 0; padding: 0.6rem; }
+    button { cursor: pointer; }
+    .flash { color: #b00; }
+  </style>
+</head>
+<body>
+  <h1>RF-DETR Detect</h1>
+  <p>Upload a video → get detections (animal / person / cow).</p>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for msg in messages %}
+        <p class="flash">{{ msg }}</p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form action="{{ url_for('detect') }}" method="post" enctype="multipart/form-data" id="form">
+    <input type="file" name="video" accept="video/*" required />
+    <button type="submit" id="btn">Run detection</button>
+  </form>
+  <script>
+    document.getElementById("form").addEventListener("submit", () => {
+      const btn = document.getElementById("btn");
+      btn.disabled = true;
+      btn.textContent = "Processing…";
+    });
+  </script>
+</body>
+</html>

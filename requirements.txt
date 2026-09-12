@@ -1,0 +1,4 @@
+flask>=3.0
+rfdetr[train,loggers]>=1.4.0
+supervision==0.29.1
+ 
